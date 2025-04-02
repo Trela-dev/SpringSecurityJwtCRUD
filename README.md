@@ -56,7 +56,7 @@ cd SpringSecurityJwtCRUD
 Run the following command in the project directory to start the database container:
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
 ### 🔨 Step 3: Build and Run the Application
