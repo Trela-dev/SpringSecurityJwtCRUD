@@ -14,29 +14,29 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 ✅ **Custom authentication provider integration**
 
 ## 🏗 Security Components
-- 🛡 **JwtFilter** – Validates tokens on each request
-- 🔑 **JWTCustomUsernamePasswordAuthenticationFilter** – Handles login and token generation
-- 🕵️ **JwtAuthenticationProvider** – Validates JWT tokens
-- 👥 **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
-- ⚙️ **ProjectConfig** – Central security configuration
+-  **JwtFilter** – Validates tokens on each request
+-  **JWTCustomUsernamePasswordAuthenticationFilter** – Handles login and token generation
+-  **JwtAuthenticationProvider** – Validates JWT tokens
+-  **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
+-  **ProjectConfig** – Central security configuration
 
 ## 🔥 Security Highlights
-- 🏷 **JWT authentication** with Bearer tokens
-- 🎭 **Role-based access control** (👑 ADMIN > 🛠 MODERATOR > 👤 USER)
-- 🔐 **Password hashing** with BCrypt
-- ⏳ **Secure token handling** (10min expiration)
-- 🔄 **CSRF protection disabled** for API (as per JWT best practices)
+-  **JWT authentication** with Bearer tokens
+-  **Role-based access control** (👑 ADMIN > 🛠 MODERATOR > 👤 USER)
+-  **Password hashing** with BCrypt
+-  **Secure token handling** (10min expiration)
+-  **CSRF protection disabled** for API (as per JWT best practices)
 
 ## 🛠 Technical Stack
-- ☕ **Java 17** with **Spring Boot 3.x**
-- 🔐 **Spring Security** with **JWT support**
-- 📦 **JPA/Hibernate** for data persistence
-- 🏗 **Flyway** for database migrations
-- 🐘 **PostgreSQL** (or any compatible database)
-- 🐳 **Docker**
+-  **Java 17** with **Spring Boot 3.x**
+-  **Spring Security** with **JWT support**
+-  **JPA/Hibernate** for data persistence
+-  **Flyway** for database migrations
+-  **PostgreSQL** (or any compatible database)
+-  **Docker**
 
 ## 📝 API Endpoints
-| 🌍 Endpoint      | 🔄 Method | 📝 Description                 | 🔑 Access                |
+| 🌍 Endpoint      |  Method |  Description                 |  Access                |
 |----------------|---------|-----------------------------|------------------------|
 | `/register`  | POST    | Register new user           | 🌎 Public               |
 | `/login`     | POST    | Authenticate and get JWT    | 🌎 Public               |
@@ -117,9 +117,9 @@ Newly registered users are assigned the **👤 USER** role by default.
 Modify settings like JWT secret or database details in `application.properties`.
 
 ## 🚀 Future Improvements
-- 🔄 Add refresh tokens
-- 🔑 Implement password reset
-- 🧪 Write integration tests
+-  Add refresh tokens
+-  Implement password reset
+-  Write integration tests
 
 ## 💼 Why This Project Matters
 - 🏗 **Production-ready security**
