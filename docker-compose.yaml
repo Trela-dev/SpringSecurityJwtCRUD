@@ -1,0 +1,11 @@
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: testdb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=testdb
+    ports:
+      - "5432:5432"
