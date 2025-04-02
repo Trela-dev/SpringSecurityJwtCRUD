@@ -60,6 +60,8 @@ docker-compose up
 ```
 
 ### 🔨 Step 3: Build and Run the Application
+Navigate to project folder(where the pom.xml file is) and run following commadns
+
 ```bash
 mvn clean install
 java -jar target/SpringSecurityJwtCRUD-0.0.1-SNAPSHOT.jar
