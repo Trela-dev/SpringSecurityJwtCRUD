@@ -53,6 +53,7 @@ cd SpringSecurityJwtCRUD
 ```
 
 ### 🐳 Step 2: Start PostgreSQL Database in Docker
+Navigate to project folder(where the pom.xml file is) and run following commadns
 Run the following command in the project directory to start the database container:
 
 ```bash
@@ -60,7 +61,6 @@ docker-compose up -d
 ```
 
 ### 🔨 Step 3: Build and Run the Application
-Navigate to project folder(where the pom.xml file is) and run following commadns
 
 ```bash
 mvn clean install
