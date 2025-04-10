@@ -29,6 +29,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectConfig {
 
     private final UserRepository userRepository;
