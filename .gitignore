@@ -24,7 +24,6 @@ Thumbs.db
 
 .env
 
-# Backupy i inne śmieci
 *.swp
 *.bak
 *.tmp
