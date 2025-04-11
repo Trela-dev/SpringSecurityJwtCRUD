@@ -19,6 +19,25 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 -  **JwtAuthenticationProvider** – Validates JWT tokens
 -  **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
 -  **ProjectConfig** – Central security configuration
+---
+## 🔄 Permission Evaluation Logic
+
+The `UserUpdatePermissionEvaluator` implements sophisticated business rules for user updates:
+
+| Current Role | Target User | Action               | Result                                                                 |
+|--------------|-------------|----------------------|------------------------------------------------------------------------|
+| ADMIN        | Any user    | Update               | ✅ Allowed                                                             |
+| MODERATOR    | Regular user| Update               | ✅ Allowed                                                             |
+| MODERATOR    | ADMIN user  | Update               | ❌ Blocked (`AdminUpdateForbiddenException`)                           |
+| MODERATOR    | Any user    | Assign ADMIN role    | ❌ Blocked (`AdminRoleAssignmentException`)                           |
+| USER         | Any user    | Update               | ❌ Blocked (`AccessDeniedException`)                                  |
+
+### Key Rules Explanation:
+- **ADMIN** has unrestricted update privileges
+- **MODERATOR** can only update non-admin users
+- **MODERATOR** cannot promote users to ADMIN
+- **USER** role has no update privileges
+- Each violation throws specific exception for precise error handling
 
 ## 🔥 Security Highlights
 -  **JWT authentication** with Bearer tokens

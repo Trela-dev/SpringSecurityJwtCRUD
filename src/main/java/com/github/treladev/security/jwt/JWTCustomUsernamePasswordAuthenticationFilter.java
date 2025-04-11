@@ -1,6 +1,7 @@
 package com.github.treladev.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.treladev.dto.LoginRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,9 +48,9 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        LoginRequest loginRequest;
+        LoginRequestDto loginRequest;
         try {
-            loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
+            loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
         } catch (IOException e) {
             throw new AuthenticationServiceException("Error parsing login request");
         }

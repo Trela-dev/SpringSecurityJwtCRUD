@@ -18,5 +18,12 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.info("JWT Authentication failed: {}",exception.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("text/plain");
+        response.getWriter().write("JWT Authentication failed.");
+        response.getWriter().flush();
+
+
+
+
     }
 }

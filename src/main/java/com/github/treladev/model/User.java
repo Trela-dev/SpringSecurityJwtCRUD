@@ -15,6 +15,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generates the ID for each new record
     private Long id;
     private String username; // Username for the user
+
+
     private String password;
     private boolean accountNonExpired=true;
     private boolean accountNonLocked=true;
@@ -23,8 +25,17 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
-    private Role role = null;
+    private Role role;
 
+
+    public User() {
+    }
+
+    public User(String username, String password, Role role) {
+        this.password = password;
+        this.username = username;
+        this.role = role;
+    }
 
     public Role getRole() {
         return role;

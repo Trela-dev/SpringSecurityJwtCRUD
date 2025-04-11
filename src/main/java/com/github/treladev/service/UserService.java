@@ -1,13 +1,18 @@
 package com.github.treladev.service;
 
 
+import com.github.treladev.exception.UsernameAlreadyInUseException;
 import com.github.treladev.model.Role;
 import com.github.treladev.model.User;
 import com.github.treladev.repository.RoleRepository;
 import com.github.treladev.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,74 +36,80 @@ public class UserService {
     }
 
     // Register a new user with encrypted password
+    @Transactional
     public void registerUser(String username, String password) {
         // Encrypt the password
+        //check if user already exists
+        boolean isUsernameAlreadyInUse = userRepository.findByUsername(username).isPresent();
+        if(isUsernameAlreadyInUse){
+            throw new UsernameAlreadyInUseException("Username '" + username + "' is already in use.");
+        }
         String encryptedPassword = passwordEncoder.encode(password);
-
-
-     Role userRole = roleRepository.findByName("ROLE_USER")
+        Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(()-> new RuntimeException("Default role not found."));
-
         // Create new user and save to repository
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setPassword(encryptedPassword);
-        newUser.setRole(userRole);
-        //newUser.setAccountNonExpired(true);
-        
+        User newUser = new User(username,password,userRole);
         userRepository.save(newUser);
+
     }
 
     // Get all users from the repository
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public List<User> getAllUsers() {return userRepository.findAll();}
 
     // Update an existing user's information
+    @Transactional
+    @PreAuthorize("hasPermission(#id, #updatedUser)")
     public User updateUser(Long id, User updatedUser) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
-
-        User userToUpdate = userRepository.findById(id).orElseThrow();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-        boolean isCurrentUserAdmin =  authorities.stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-
-        boolean isUserToUpdateAdmin = userToUpdate.getRole().getName().equals("ROLE_ADMIN");
-
-        if(isUserToUpdateAdmin && !isCurrentUserAdmin){
-            throw new RuntimeException("You cannot update ADMIN.");
-        }
-
+        User presentUser = findUserById(id);
         String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
-        user.setUsername(updatedUser.getUsername());
-        user.setPassword(encryptedPassword);
-
-        return userRepository.save(user);
+        presentUser.setUsername(updatedUser.getUsername());
+        presentUser.setPassword(encryptedPassword);
+        presentUser.setRole(updatedUser.getRole());
+        return userRepository.save(presentUser);
     }
+
+//
+//    // Update an existing user's information
+//    @Transactional
+//    public User updateUser(Long id, User updatedUser) {
+//        User presentUser = findUserById(id);
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//
+//        boolean isCurrentUserAdmin =  authorities.stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+//
+//        boolean isUserToUpdateAdmin = updatedUser.getRole().getName().equals("ROLE_ADMIN");
+//
+//        if(isUserToUpdateAdmin && !isCurrentUserAdmin){
+//            throw new RuntimeException("You cannot update ADMIN.");
+//        }
+//
+//        String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
+//        presentUser.setUsername(updatedUser.getUsername());
+//        presentUser.setPassword(encryptedPassword);
+//
+//        return userRepository.save(presentUser);
+//    }
+//
+//
 
     // Delete a user by their ID
-    public boolean deleteUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        
-        if (user.isPresent()) {
-            userRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+    @Transactional
+    public void deleteUserById(Long id) {
+        User user = findUserById(id);
+        userRepository.deleteById(id);
     }
 
-    // Check if a user exists by their ID
-    public boolean doesUserExist(Long id) {
-        return userRepository.existsById(id);
+
+    public User findUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("No user found with id " + id));
+        return user;
     }
 
-    // Get a user by their username
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
+
+
+
 }
