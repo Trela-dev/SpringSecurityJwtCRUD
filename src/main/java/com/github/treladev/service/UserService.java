@@ -1,6 +1,7 @@
 package com.github.treladev.service;
 
 
+import com.github.treladev.exception.DefaultRoleNotFoundException;
 import com.github.treladev.exception.UsernameAlreadyInUseException;
 import com.github.treladev.model.Role;
 import com.github.treladev.model.User;
@@ -46,7 +47,7 @@ public class UserService {
         }
         String encryptedPassword = passwordEncoder.encode(password);
         Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(()-> new RuntimeException("Default role not found."));
+                .orElseThrow(()-> new DefaultRoleNotFoundException("Default role not found."));
         // Create new user and save to repository
         User newUser = new User(username,password,userRole);
         userRepository.save(newUser);
@@ -68,32 +69,6 @@ public class UserService {
         return userRepository.save(presentUser);
     }
 
-//
-//    // Update an existing user's information
-//    @Transactional
-//    public User updateUser(Long id, User updatedUser) {
-//        User presentUser = findUserById(id);
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//
-//        boolean isCurrentUserAdmin =  authorities.stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-//
-//        boolean isUserToUpdateAdmin = updatedUser.getRole().getName().equals("ROLE_ADMIN");
-//
-//        if(isUserToUpdateAdmin && !isCurrentUserAdmin){
-//            throw new RuntimeException("You cannot update ADMIN.");
-//        }
-//
-//        String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
-//        presentUser.setUsername(updatedUser.getUsername());
-//        presentUser.setPassword(encryptedPassword);
-//
-//        return userRepository.save(presentUser);
-//    }
-//
-//
 
     // Delete a user by their ID
     @Transactional

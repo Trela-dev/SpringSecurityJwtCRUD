@@ -36,6 +36,12 @@ public class GlobalExceptionHandler {
        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
    }
 
+    @ExceptionHandler(DefaultRoleNotFoundException.class)
+    public ResponseEntity<String> handleNoSuchRoleException(DefaultRoleNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+
 
 
 

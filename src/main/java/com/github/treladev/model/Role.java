@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "roles")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generates the ID for each new record
     private Long id;
@@ -27,5 +28,19 @@ public class Role {
     }
 
 
+    public Role(String name) {
+        this.name = name;
+    }
 
+    public Role() {
+    }
+
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

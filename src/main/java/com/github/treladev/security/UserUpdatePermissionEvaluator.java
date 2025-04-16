@@ -4,6 +4,7 @@ import com.github.treladev.exception.AdminRoleAssignmentException;
 import com.github.treladev.exception.AdminUpdateForbiddenException;
 import com.github.treladev.model.User;
 import com.github.treladev.service.UserService;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,7 @@ public class UserUpdatePermissionEvaluator implements PermissionEvaluator {
         Long presentUserId = (Long) targetDomainObject;
         User presentUser = userService.findUserById(presentUserId);
         User updatedUser = (User) permission;
+
 
         boolean isCurrentUserAdmin = authorities.stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));

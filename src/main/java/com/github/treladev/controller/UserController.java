@@ -3,7 +3,6 @@ package com.github.treladev.controller;
 
 import com.github.treladev.dto.UpdateUserDto;
 import com.github.treladev.exception.NoSuchRoleException;
-import com.github.treladev.model.Role;
 import com.github.treladev.model.User;
 import com.github.treladev.repository.RoleRepository;
 import com.github.treladev.service.UserService;
@@ -53,7 +52,7 @@ public class UserController {
     // Endpoint for deleting a user by ID
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> delete(@PathVariable long id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok("User with ID " + id + " has been successfully deleted.");
     }

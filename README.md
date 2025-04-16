@@ -11,7 +11,27 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 ✅ **Secure password storage with 🔑 BCrypt hashing**  
 ✅ **Token validation with expiration (⏳ 10 minutes)**  
 ✅ **Custom security filters for JWT processing**  
-✅ **Custom authentication provider integration**
+✅ **Custom authentication provider integration**  
+✅ **Advanced authorization logic with 🔍 `PermissionEvaluator` for fine-grained access control**
+
+
+## 📌 Technologies Used
+
+- **Java 17** – main programming language
+- **Spring Boot** – backend application framework
+- **Spring Security** – authentication and authorization
+- **JWT (JSON Web Token)** – token-based authentication
+- **JPA (Hibernate)** – object-relational mapping
+- **PostgreSQL** – relational database
+- **Flyway** – database schema versioning and migrations
+- **Maven** – dependency management and build automation
+- **JUnit 5** + **MockMvc** – unit and integration testing
+- **Mockito** – mocking dependencies in tests
+- **Docker** + **Docker Compose** – containerization and database setup
+- **REST API** – client-server communication architecture
+
+
+
 
 ## 🏗 Security Components
 -  **JwtFilter** – Validates tokens on each request
@@ -19,6 +39,8 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 -  **JwtAuthenticationProvider** – Validates JWT tokens
 -  **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
 -  **ProjectConfig** – Central security configuration
+-  **CustomPermissionEvaluator** – Enables fine-grained, method-level authorization logic based on permissions
+
 ---
 ## 🔄 Permission Evaluation Logic
 
@@ -39,20 +61,6 @@ The `UserUpdatePermissionEvaluator` implements sophisticated business rules for 
 - **USER** role has no update privileges
 - Each violation throws specific exception for precise error handling
 
-## 🔥 Security Highlights
--  **JWT authentication** with Bearer tokens
--  **Role-based access control** (👑 ADMIN > 🛠 MODERATOR > 👤 USER)
--  **Password hashing** with BCrypt
--  **Secure token handling** (10min expiration)
--  **CSRF protection disabled** for API (as per JWT best practices)
-
-## 🛠 Technical Stack
--  **Java 17** with **Spring Boot 3.x**
--  **Spring Security** with **JWT support**
--  **JPA/Hibernate** for data persistence
--  **Flyway** for database migrations
--  **PostgreSQL** (or any compatible database)
--  **Docker**
 
 ## 📝 API Endpoints
 | 🌍 Endpoint      |  Method |  Description                 |  Access                |
@@ -91,6 +99,7 @@ The application should now be running on [http://localhost:8080](http://localhos
 ### 📡 Step 4: Test the API with Postman
 Use Postman to test endpoints:
 
+
 #### 📥 User Registration
 **POST** [http://localhost:8080/register](http://localhost:8080/register)
 ```json
@@ -102,6 +111,16 @@ Use Postman to test endpoints:
 
 #### 🔑 User Login
 **POST** [http://localhost:8080/login](http://localhost:8080/login)
+> After logging in, you will receive a **JWT token** in the `Authorization` header of the response.  
+> Copy the token and use it in the `Authorization` header for all endpoints **other than** `/login` and `/register`.
+>
+> Format:  
+> `Authorization: Bearer your_token_here`
+>
+> In Postman, go to the **Authorization** tab, choose **Bearer Token**, and paste the token into the **Token** field.
+
+
+
 ```json
 {
   "username": "your_username",
@@ -123,14 +142,41 @@ Use Postman to test endpoints:
   "password": "new_password"
 }
 ```
+---
+# 🔄 Default Users (Admin, Moderator & Users)
 
-### 🔄 Default Users (Admin & Moderator)
-| Role      | Username | Password |
-|-----------|---------|----------|
-| 👑 Admin  | admin   | admin    |
-| 🛠 Moderator | moderator | moderator |
+| Role        | Username   | Password   |
+|-------------|------------|------------|
+| 👑 Admin     | `admin`     | `admin`     |
+| 🛠 Moderator | `moderator` | `moderator` |
+| 👤 User      | `user1`     | `user1`     |
+| 👤 User      | `user2`     | `user2`     |
+| 👤 User      | `user3`     | `user3`     |
+| 👤 User      | `user4`     | `user4`     |
+| 👤 User      | `user5`     | `user5`     |
 
 Newly registered users are assigned the **👤 USER** role by default.
+
+---
+## ✅ Testing
+
+The project includes a comprehensive test suite written in **JUnit 5**, using:
+
+- **Spring's WebMvcTest** – for controller-level integration tests
+- **MockMvc** – to simulate HTTP requests and test response handling
+- **Mockito** – to mock service and repository layers
+- **Custom Mock Repositories** – in-memory implementations for `UserRepository` and `RoleRepository`
+
+### Covered Test Cases
+
+- ✅ Successful and failed login scenarios with JWT token verification
+- ✅ Successful and failed user registration
+- ✅ Protected endpoints access with valid/invalid tokens
+- ✅ Role-based access control (e.g., only admins can update/delete other admins)
+- ✅ Conflict scenarios like registering an already existing user
+- ✅ Forbidden actions (e.g., moderators trying to assign admin roles)
+
+---
 
 ## ⚙ Configuration
 Modify settings like JWT secret or database details in `application.properties`.
@@ -138,7 +184,6 @@ Modify settings like JWT secret or database details in `application.properties`.
 ## 🚀 Future Improvements
 -  Add refresh tokens
 -  Implement password reset
--  Write integration tests
 
 ## 💼 Why This Project Matters
 - 🏗 **Production-ready security**

@@ -2,11 +2,13 @@ package com.github.treladev.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.treladev.dto.LoginRequestDto;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -83,4 +85,17 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
 
 
     }
+
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException{
+
+        super.unsuccessfulAuthentication(request,response,failed);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write("Invalid credentials");
+
+    }
+
+
+
 }

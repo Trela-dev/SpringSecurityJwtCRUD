@@ -1,9 +1,14 @@
-package com.github.treladev.security;
+package com.github.treladev;
 
+import com.github.treladev.repository.RoleRepository;
 import com.github.treladev.repository.UserRepository;
-import com.github.treladev.security.jwt.JWTCustomUsernamePasswordAuthenticationFilter;
-import com.github.treladev.security.jwt.JwtAuthenticationProvider;
-import com.github.treladev.security.jwt.JwtFilter;
+import com.github.treladev.security.CustomUserDetailsService;
+import com.github.treladev.security.SecurityConfig;
+import com.github.treladev.security.UserUpdatePermissionEvaluator;
+import com.github.treladev.security.jwt.*;
+import org.mockito.Mock;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -13,37 +18,50 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
-/**
- * Spring Security configuration class.
- *
- * - Configures authentication and authorization rules.
- * - Registers custom security filters.
- * - Provides user authentication mechanisms.
- */
-@Configuration
-@EnableWebSecurity
+
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("!test")
-public class SecurityConfig {
+@Configuration
+@Profile("test")
+@Import({JwtUtil.class, JWTCustomUsernamePasswordAuthenticationFilter.class, JwtAuthenticationProvider.class,
+        JwtFilter.class, JwtAuthenticationSuccessHandler.class,JwtAuthenticationFailureHandler.class, UserUpdatePermissionEvaluator.class})
+public class TestSecurityConfig{
 
     private final UserRepository userRepository;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JWTCustomUsernamePasswordAuthenticationFilter jwtCustomUsernamePasswordAuthenticationFilter;
     private final JwtFilter jwtFilter;
 
+
+    @Bean
+    public UserRepository userRepository(){
+        MockUserRepository mockedRepository = new MockUserRepository();
+        return mockedRepository;
+    }
+
+    @Bean
+    public RoleRepository roleRepository(){
+        MockRoleRepository mockedRepository = new MockRoleRepository();
+
+        return mockedRepository;
+    }
+
+
     /**
      * Constructor for injecting dependencies.
      */
-    public SecurityConfig(UserRepository userRepository,
+    public TestSecurityConfig(@Lazy UserRepository userRepository,
                           JWTCustomUsernamePasswordAuthenticationFilter jwtCustomUsernamePasswordAuthenticationFilter,
                           JwtAuthenticationProvider jwtAuthenticationProvider,
                           @Lazy JwtFilter jwtFilter) {
+
         this.userRepository = userRepository;
         this.jwtAuthenticationProvider = jwtAuthenticationProvider;
         this.jwtCustomUsernamePasswordAuthenticationFilter = jwtCustomUsernamePasswordAuthenticationFilter;
@@ -66,7 +84,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/register/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
 
         // Add custom authentication filters
         http.addFilterAt(jwtCustomUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -103,6 +121,23 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+

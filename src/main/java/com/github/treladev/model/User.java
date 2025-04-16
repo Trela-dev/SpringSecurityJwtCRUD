@@ -14,7 +14,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generates the ID for each new record
     private Long id;
+
     private String username; // Username for the user
+
 
 
     private String password;
@@ -37,6 +39,29 @@ public class User {
         this.role = role;
     }
 
+
+    public User(Long id, String username, String password, Role role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", accountNonExpired=" + accountNonExpired +
+                ", accountNonLocked=" + accountNonLocked +
+                ", credentialsNonExpired=" + credentialsNonExpired +
+                ", enabled=" + enabled +
+                ", role=" + role +
+                '}';
+    }
+
+
+
     public Role getRole() {
         return role;
     }
@@ -44,7 +69,6 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
     public boolean isEnabled() {
         return enabled;
