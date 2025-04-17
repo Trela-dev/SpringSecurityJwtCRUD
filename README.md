@@ -17,7 +17,7 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 
 ## 📌 Technologies Used
 
-- **Java 17** – main programming language
+- **Java 21** – main programming language
 - **Spring Boot** – backend application framework
 - **Spring Security** – authentication and authorization
 - **JWT (JSON Web Token)** – token-based authentication
