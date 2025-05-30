@@ -49,7 +49,7 @@ public class UserService {
         Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(()-> new DefaultRoleNotFoundException("Default role not found."));
         // Create new user and save to repository
-        User newUser = new User(username,password,userRole);
+        User newUser = new User(username,encryptedPassword,userRole);
         userRepository.save(newUser);
 
     }
