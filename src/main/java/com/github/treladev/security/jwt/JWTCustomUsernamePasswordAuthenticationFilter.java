@@ -3,10 +3,16 @@ package com.github.treladev.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.treladev.dto.LoginRequestDto;
 
+import com.github.treladev.model.RefreshToken;
+import com.github.treladev.model.User;
+import com.github.treladev.service.RefreshTokenService;
+import com.github.treladev.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,10 +37,13 @@ import java.util.stream.Collectors;
 public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+    private final UserService userService;
 
-    public JWTCustomUsernamePasswordAuthenticationFilter(@Lazy AuthenticationManager authenticationManager,
-                                                         JwtUtil jwtUtil) {
+    public JWTCustomUsernamePasswordAuthenticationFilter(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, @Lazy AuthenticationManager authenticationManager) {
+        this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
         this.setAuthenticationManager(authenticationManager);
     }
 
@@ -69,17 +78,34 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
+                                            Authentication authResult) throws IOException {
 
         String username = authResult.getName();
         String roles = authResult.getAuthorities().stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.joining(","));
 
-        String jwtToken = jwtUtil.generateToken(username, roles);
-        response.setHeader("Authorization", "Bearer " + jwtToken);
+        String accessToken = jwtUtil.generateToken(username, roles);
+
+        User user = userService.findUserByUsername(username);
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        Cookie refreshCookie = new Cookie("refreshToken", refreshToken.getToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+        response.addCookie(refreshCookie);
+
+
+
+
+        response.setHeader("Authorization", "Bearer " + accessToken);
         response.setContentType("text/plain");
-        response.getWriter().write("JWT token generated successfully! You can find it in the 'Authorization' header.");
+        response.getWriter().write(
+                "JWT token generated successfully! You can find it in the 'Authorization' header.  Refresh token has been set in the 'refreshToken' cookie."
+        );
         response.getWriter().flush();
 
 

@@ -41,7 +41,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    public ResponseEntity<String> handleRefreshTokenNotFoundException(RefreshTokenNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<String> handleRefreshTokenExpiredException(RefreshTokenExpiredException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
 
 
 

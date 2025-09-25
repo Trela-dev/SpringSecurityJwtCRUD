@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("") // Base path
+@RequestMapping("api") // Base path
 public class UserController {
 
     private final UserService userService;

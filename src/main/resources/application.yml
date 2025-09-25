@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    baseline-on-migrate: true
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+jwt:
+  secret: mySuperSecretKeyThatIsAtLeast32CharactersLong

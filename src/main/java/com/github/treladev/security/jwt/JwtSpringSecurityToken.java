@@ -4,10 +4,10 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Custom authentication token for JWT-based authentication in Spring Security.
- *
  * - Extends `AbstractAuthenticationToken` to integrate with Spring Security.
  * - Stores the JWT token and associated user information.
  * - Marks authentication as successful upon creation.
@@ -19,7 +19,6 @@ public class JwtSpringSecurityToken extends AbstractAuthenticationToken {
 
     /**
      * Constructs a JWT authentication token.
-     *
      * @param username     The authenticated user's username.
      * @param token        The JWT token.
      * @param authorities  The user's granted authorities (roles/permissions).
@@ -46,4 +45,24 @@ public class JwtSpringSecurityToken extends AbstractAuthenticationToken {
     public Object getPrincipal() {
         return username;
     }
+
+
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(super.hashCode(), username,token);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(!(o instanceof JwtSpringSecurityToken that)) return false;
+        if(!super.equals(o)) return false;
+        return Objects.equals(username, that.username) &&
+                Objects.equals(token, that.token);
+    }
+
+
+
+
 }

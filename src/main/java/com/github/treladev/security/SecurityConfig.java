@@ -4,6 +4,7 @@ import com.github.treladev.repository.UserRepository;
 import com.github.treladev.security.jwt.JWTCustomUsernamePasswordAuthenticationFilter;
 import com.github.treladev.security.jwt.JwtAuthenticationProvider;
 import com.github.treladev.security.jwt.JwtFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -29,26 +30,15 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 @Profile("!test")
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JWTCustomUsernamePasswordAuthenticationFilter jwtCustomUsernamePasswordAuthenticationFilter;
     private final JwtFilter jwtFilter;
 
-    /**
-     * Constructor for injecting dependencies.
-     */
-    public SecurityConfig(UserRepository userRepository,
-                          JWTCustomUsernamePasswordAuthenticationFilter jwtCustomUsernamePasswordAuthenticationFilter,
-                          JwtAuthenticationProvider jwtAuthenticationProvider,
-                          @Lazy JwtFilter jwtFilter) {
-        this.userRepository = userRepository;
-        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
-        this.jwtCustomUsernamePasswordAuthenticationFilter = jwtCustomUsernamePasswordAuthenticationFilter;
-        this.jwtFilter = jwtFilter;
-    }
+
+
 
     /**
      * Configures HTTP security settings, including authentication and authorization rules.
@@ -63,9 +53,14 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable());
 
+        http.logout(logout -> logout.disable());
+
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register/**").permitAll()
-                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/api/auth/register/**").permitAll()
+                .requestMatchers("/api/auth/login/**").permitAll()
+                .requestMatchers("/api/auth/refresh/**").permitAll()
+                .requestMatchers("/api/auth/logout/**").permitAll()
+                //.requestMatchers("/error/**").permitAll()
                 .anyRequest().authenticated());
 
         // Add custom authentication filters
@@ -75,34 +70,5 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Custom UserDetailsService for loading user details from the database.
-     */
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(userRepository);
-    }
 
-    /**
-     * Configures the authentication manager with:
-     * - DAO-based authentication (for username/password login).
-     * - JWT-based authentication.
-     */
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-
-        return new ProviderManager(List.of(authProvider, jwtAuthenticationProvider));
-    }
-
-    /**
-     * Defines the password encoder for encrypting user passwords.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

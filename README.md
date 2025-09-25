@@ -63,13 +63,13 @@ The `UserUpdatePermissionEvaluator` implements sophisticated business rules for 
 
 
 ## 📝 API Endpoints
-| 🌍 Endpoint      |  Method |  Description                 |  Access                |
-|----------------|---------|-----------------------------|------------------------|
-| `/register`  | POST    | Register new user           | 🌎 Public               |
-| `/login`     | POST    | Authenticate and get JWT    | 🌎 Public               |
-| `/users`     | GET     | Get all users               | 👤 USER, 🛠 MODERATOR, 👑 ADMIN |
-| `/users/{id}`| PUT     | Update user                 | 🛠 MODERATOR, 👑 ADMIN   |
-| `/users/{id}`| DELETE  | Delete user                 | 👑 ADMIN only           |
+| 🌍 Endpoint       |  Method |  Description                 |  Access                |
+|-------------------|---------|-----------------------------|------------------------|
+| `/register`       | POST    | Register new user           | 🌎 Public               |
+| `/login`          | POST    | Authenticate and get JWT    | 🌎 Public               |
+| `/api/users`      | GET     | Get all users               | 👤 USER, 🛠 MODERATOR, 👑 ADMIN |
+| `/api/users/{id}` | PUT     | Update user                 | 🛠 MODERATOR, 👑 ADMIN   |
+| `/api/users/{id}` | DELETE  | Delete user                 | 👑 ADMIN only           |
 
 ## 🏁 Setup Instructions
 

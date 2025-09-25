@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,6 +27,8 @@ import java.io.IOException;
  * - If invalid or missing, responds with a 403 Forbidden status.
  */
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
@@ -32,14 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
     private final JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler;
 
-    public JwtFilter(JwtUtil jwtUtil, AuthenticationManager authenticationManager,
-                     JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler,
-                     JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler) {
-        this.jwtUtil = jwtUtil;
-        this.authenticationManager = authenticationManager;
-        this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
-        this.jwtAuthenticationFailureHandler = jwtAuthenticationFailureHandler;
-    }
+
 
     /**
      * Intercepts each request, checks for JWT authentication, and either allows or blocks access.
@@ -51,8 +49,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         String path = request.getServletPath();
 
+        log.info("PATH INSIDE FILTER:{}", path);
         // Allow public endpoints (login and register) without JWT authentication
-        if ("/login".equals(path) || "/register".equals(path)) {
+        if ("/api/auth/login".equals(path) || "/api/auth/register".equals(path) || "/api/auth/refresh".equals(path) || "/api/auth/logout".equals(path) || "/error".equals(path)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -72,7 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("text/plain");
             response.getWriter().write("Unauthorized - JWT token required");
-            return;
+
         }
     }
 

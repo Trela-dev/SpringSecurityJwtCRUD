@@ -82,6 +82,15 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("No user found with id " + id));
         return user;
+
+
+    }
+
+
+    public User findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("No user found with username " + username));
+        return user;
     }
 
 
