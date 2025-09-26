@@ -63,7 +63,7 @@ public class AuthController {
     @DeleteMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) {
         refreshTokenService.deleteByToken(refreshTokenRequestDTO.refreshToken());
-        return ResponseEntity.ok("Logout successful.");
+        return ResponseEntity.noContent().build();
     }
 
 

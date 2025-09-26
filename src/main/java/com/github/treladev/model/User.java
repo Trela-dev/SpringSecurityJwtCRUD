@@ -19,8 +19,6 @@ public class User {
 
     private String username; // Username for the user
 
-
-
     private String password;
     private boolean accountNonExpired=true;
     private boolean accountNonLocked=true;

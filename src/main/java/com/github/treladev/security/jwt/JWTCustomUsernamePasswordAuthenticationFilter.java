@@ -45,6 +45,7 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.setAuthenticationManager(authenticationManager);
+        this.setFilterProcessesUrl("/api/auth/login");
     }
 
     /**

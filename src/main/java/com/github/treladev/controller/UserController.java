@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api") // Base path
+@RequestMapping("/api/users") // Base path
 public class UserController {
 
     private final UserService userService;
@@ -27,7 +27,7 @@ public class UserController {
 
     // Endpoint for getting all users
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    @GetMapping("/users")
+    @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
@@ -35,8 +35,9 @@ public class UserController {
 
 
     // Endpoint for updating a user by ID
-    //@PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
-    @PutMapping("/users/{id}")
+    // Permission evaluator handles update permissions logic (UserService)
+    // Only Admin and Moderator can update users, but only admin can make moderator and moterators can't update admins
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateUserProfile(@PathVariable long id, @RequestBody UpdateUserDto updateUserDto) {
             User updatedUser = new User();
             updatedUser.setUsername(updateUserDto.getUsername());
@@ -51,7 +52,7 @@ public class UserController {
 
     // Endpoint for deleting a user by ID
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok("User with ID " + id + " has been successfully deleted.");

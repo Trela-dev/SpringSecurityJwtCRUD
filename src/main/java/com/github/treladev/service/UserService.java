@@ -8,16 +8,13 @@ import com.github.treladev.model.User;
 import com.github.treladev.repository.RoleRepository;
 import com.github.treladev.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.access.prepost.PostAuthorize;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

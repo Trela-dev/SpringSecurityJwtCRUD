@@ -37,6 +37,7 @@ public class UserUpdatePermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         Long presentUserId = (Long) targetDomainObject;
