@@ -63,11 +63,11 @@ public class AuthControllerTest {
 
 
     @Test
-    @DisplayName("PUT /login - should return 200 OK with JWT token in Authorization header for valid credentials")
+    @DisplayName("PUT /api/auth/login - should return 200 OK with JWT token in Authorization header for valid credentials")
     void login_ShouldReturnOkAndJwtTokenInHeaderOnSuccessfulAuthentication() throws Exception {
         // Test successful login scenario
-        mockMvc.perform(post("/login")
-                        .servletPath("/login") // Explicit path for filter requirements
+        mockMvc.perform(post("/api/auth/login")
+                        .servletPath("/api/auth/login") // Explicit path for filter requirements
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                 {
@@ -85,11 +85,11 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /login - should return 401 Unauthorized for invalid credentials")
+    @DisplayName("POST /api/auth/login - should return 401 Unauthorized for invalid credentials")
     void login_ShouldReturnUnauthorizedForInvalidCredentials() throws Exception {
         // Test failed login scenario
-        mockMvc.perform(post("/login")
-                        .servletPath("/login")
+        mockMvc.perform(post("/api/auth/login")
+                        .servletPath("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                 {
@@ -104,13 +104,12 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /register - should return 200 OK when registration is successful")
+    @DisplayName("POST /api/auth/register - should return 200 OK when registration is successful")
     void register_ShouldReturnOkWhenSuccessful() throws Exception {
         // Test successful registration
 
-        System.out.println("LISTA WSZYSKTICH UZTYTKOWNIKOW" +  userRepository.findAll());
-        mockMvc.perform(post("/register")
-                        .servletPath("/register")
+        mockMvc.perform(post("/api/auth/register")
+                        .servletPath("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                 {
@@ -126,11 +125,11 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /register - should return 409 Conflict when username already exists")
+    @DisplayName("POST /api/auth/register - should return 409 Conflict when username already exists")
     void register_ShouldReturnConflictWhenUsernameExists() throws Exception {
         // Test registration conflict
-        mockMvc.perform(post("/register")
-                        .servletPath("/register")
+        mockMvc.perform(post("/api/auth/register")
+                        .servletPath("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                 {

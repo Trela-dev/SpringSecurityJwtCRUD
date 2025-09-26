@@ -1,5 +1,6 @@
 package com.github.treladev.security;
 
+import com.github.treladev.dto.UpdateUserDTO;
 import com.github.treladev.exception.AdminRoleAssignmentException;
 import com.github.treladev.exception.AdminUpdateForbiddenException;
 import com.github.treladev.model.User;
@@ -42,7 +43,7 @@ public class UserUpdatePermissionEvaluator implements PermissionEvaluator {
 
         Long presentUserId = (Long) targetDomainObject;
         User presentUser = userService.findUserById(presentUserId);
-        User updatedUser = (User) permission;
+        UpdateUserDTO updateUserDTO = (UpdateUserDTO) permission;
 
 
         boolean isCurrentUserAdmin = authorities.stream()
@@ -52,7 +53,7 @@ public class UserUpdatePermissionEvaluator implements PermissionEvaluator {
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_MODERATOR"));
 
         boolean isTargetUserAdmin = presentUser.getRole().getName().equals("ROLE_ADMIN");
-        boolean isAssignedRoleAdmin = updatedUser.getRole().getName().equals("ROLE_ADMIN");
+        boolean isAssignedRoleAdmin = updateUserDTO.role().equals("ROLE_ADMIN");
 
         // Allow only moderators and admins to proceed
         if (isCurrentUserAdmin || isCurrentUserModerator) {

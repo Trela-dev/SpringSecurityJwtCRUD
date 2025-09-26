@@ -1,8 +1,11 @@
 package com.github.treladev.service;
 
+import com.github.treladev.exception.RefreshTokenExpiredException;
+import com.github.treladev.exception.RefreshTokenNotFoundException;
 import com.github.treladev.model.RefreshToken;
 import com.github.treladev.model.User;
 import com.github.treladev.repository.RefreshTokenRepository;
+import com.github.treladev.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,7 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtUtil jwtUtil;
 
     public RefreshToken createRefreshToken(User user){
 
@@ -41,5 +45,17 @@ public class RefreshTokenService {
 
     public void deleteByToken(String refreshToken) {
         refreshTokenRepository.deleteByToken(refreshToken);
+    }
+
+    public String refreshToken(String refreshToken){
+       RefreshToken token = findByToken(refreshToken)
+                .orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found."));
+
+        if(token.isExpired()) {
+            throw new RefreshTokenExpiredException("Refresh token expired. Please log in again.");
+        }
+
+        // return new JWT access token
+        return jwtUtil.generateToken(token.getUser().getUsername(), token.getUser().getRole().getName());
     }
 }

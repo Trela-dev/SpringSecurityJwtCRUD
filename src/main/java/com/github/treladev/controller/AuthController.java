@@ -1,14 +1,13 @@
 package com.github.treladev.controller;
 
 import com.github.treladev.dto.RefreshTokenRequestDTO;
-import com.github.treladev.exception.RefreshTokenExpiredException;
-import com.github.treladev.exception.RefreshTokenNotFoundException;
-import com.github.treladev.model.RefreshToken;
-import com.github.treladev.model.User;
-import com.github.treladev.dto.LoginRequestDto;
+import com.github.treladev.dto.RegisterRequestDTO;
+import com.github.treladev.dto.LoginRequestDTO;
+
 import com.github.treladev.security.jwt.JwtUtil;
 import com.github.treladev.service.RefreshTokenService;
 import com.github.treladev.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -28,35 +27,21 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-            userService.registerUser(user.getUsername(), user.getPassword());
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO) {
+            userService.registerUser(registerRequestDTO.username(), registerRequestDTO.password());
             return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequestDto loginRequest) {
+    public void login(@RequestBody @Valid LoginRequestDTO loginRequest) {
         // This method is empty because authentication is handled by a filter.
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) {
-        // checking if refresh token exists
-
-        log.info(refreshTokenRequestDTO.refreshToken());
-
-        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.refreshToken())
-                .orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found."));
-        // checking if refresh token is not expired
-        if(refreshToken.isExpired()) {
-            throw new RefreshTokenExpiredException("Refresh token expired. Please log in again.");
-        }
-        // creating new JWT access TOKEN
-        String newAccessToken = jwtUtil.generateToken(refreshToken.getUser().getUsername(), refreshToken.getUser().getRole().getName());
-
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshTokenService.refreshToken(refreshTokenRequestDTO.refreshToken()))
                 .build();
-
     }
 
 

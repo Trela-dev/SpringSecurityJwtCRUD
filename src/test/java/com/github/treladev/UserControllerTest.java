@@ -1,7 +1,7 @@
 package com.github.treladev;
 
 import com.github.treladev.controller.UserController;
-import com.github.treladev.dto.UpdateUserDto;
+import com.github.treladev.dto.UpdateUserDTO;
 import com.github.treladev.model.Role;
 import com.github.treladev.model.User;
 import com.github.treladev.repository.RoleRepository;
@@ -115,7 +115,7 @@ public class UserControllerTest {
         when(jwtUtil.validateToken(mockValidJwtToken)).thenReturn(true);
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(mockRole));
         User updatedUser = new User("updatedUsername", "updatedPassword", mockRole);
-        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
+        when(userService.updateUser(eq(1L), any(UpdateUserDTO.class))).thenReturn(updatedUser);
 
         // Perform PUT request with valid token
         mockMvc.perform(put("/users/1")

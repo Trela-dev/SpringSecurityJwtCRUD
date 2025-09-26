@@ -1,7 +1,9 @@
 package com.github.treladev.service;
 
 
+import com.github.treladev.dto.UpdateUserDTO;
 import com.github.treladev.exception.DefaultRoleNotFoundException;
+import com.github.treladev.exception.NoSuchRoleException;
 import com.github.treladev.exception.UsernameAlreadyInUseException;
 import com.github.treladev.model.Role;
 import com.github.treladev.model.User;
@@ -56,13 +58,19 @@ public class UserService {
 
     // Update an existing user's information
     @Transactional
-    @PreAuthorize("hasPermission(#id, #updatedUser)")
-    public User updateUser(Long id, User updatedUser) {
+    @PreAuthorize("hasPermission(#id, #updateUserDTO)")
+    public User updateUser(Long id, UpdateUserDTO updateUserDTO) {
+
         User presentUser = findUserById(id);
-        String encryptedPassword = passwordEncoder.encode(updatedUser.getPassword());
-        presentUser.setUsername(updatedUser.getUsername());
-        presentUser.setPassword(encryptedPassword);
-        presentUser.setRole(updatedUser.getRole());
+
+        presentUser.setUsername(updateUserDTO.username());
+        presentUser.setPassword(passwordEncoder.encode(updateUserDTO.password()));
+
+        Role role = roleRepository.findByName(updateUserDTO.role())
+                .orElseThrow(() -> new NoSuchRoleException("No such role: " + updateUserDTO.role()));
+
+        presentUser.setRole(role);
+
         return userRepository.save(presentUser);
     }
 
@@ -70,24 +78,21 @@ public class UserService {
     // Delete a user by their ID
     @Transactional
     public void deleteUserById(Long id) {
-        User user = findUserById(id);
         userRepository.deleteById(id);
     }
 
 
     public User findUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
+        return userRepository.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("No user found with id " + id));
-        return user;
 
 
     }
 
 
     public User findUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() ->
+        return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("No user found with username " + username));
-        return user;
     }
 
 

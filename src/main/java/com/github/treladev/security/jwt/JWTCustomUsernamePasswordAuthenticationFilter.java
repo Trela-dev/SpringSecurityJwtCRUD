@@ -1,7 +1,7 @@
 package com.github.treladev.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.treladev.dto.LoginRequestDto;
+import com.github.treladev.dto.LoginRequestDTO;
 
 import com.github.treladev.model.RefreshToken;
 import com.github.treladev.model.User;
@@ -12,7 +12,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -60,15 +59,15 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        LoginRequestDto loginRequest;
+        LoginRequestDTO loginRequest;
         try {
-            loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+            loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequestDTO.class);
         } catch (IOException e) {
             throw new AuthenticationServiceException("Error parsing login request");
         }
 
-        String username = (loginRequest.getUsername() != null) ? loginRequest.getUsername().trim() : "";
-        String password = (loginRequest.getPassword() != null) ? loginRequest.getPassword().trim() : "";
+        String username = (loginRequest.username() != null) ? loginRequest.username().trim() : "";
+        String password = (loginRequest.password() != null) ? loginRequest.password().trim() : "";
 
         UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
         return this.getAuthenticationManager().authenticate(authRequest);
