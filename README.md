@@ -1,7 +1,3 @@
-Super ✨ – Twoja dokumentacja wygląda już bardzo profesjonalnie, wystarczy ją lekko zaktualizować do nowych endpointów (`/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/refresh`).
-Poniżej masz poprawioną wersję README z naniesionymi zmianami:
-
----
 
 # 🛡️ Spring Security JWT CRUD Application with Roles
 
