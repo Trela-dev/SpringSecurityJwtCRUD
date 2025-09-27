@@ -3,6 +3,9 @@ package com.github.treladev.security;
 
 import com.github.treladev.model.User;
 import com.github.treladev.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,17 +20,11 @@ import org.springframework.stereotype.Service;
  * - Used by Spring Security during authentication.
  */
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
     private final UserRepository userRepository;
-
-    /**
-     * Injects the UserRepository dependency.
-     */
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /**
      * Loads user details by username.
@@ -39,9 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        logger.info("Inside loadUserByUsername in CustomUserDetailsService. Username: " + username);
-
-        System.out.println(userRepository);
+        log.info("Inside loadUserByUsername in CustomUserDetailsService. Username: " + username);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));

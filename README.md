@@ -1,87 +1,91 @@
+Super ✨ – Twoja dokumentacja wygląda już bardzo profesjonalnie, wystarczy ją lekko zaktualizować do nowych endpointów (`/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/refresh`).
+Poniżej masz poprawioną wersję README z naniesionymi zmianami:
+
+---
+
 # 🛡️ Spring Security JWT CRUD Application with Roles
 
 ## 🚀 Project Overview
-This project demonstrates a secure RESTful API built with **Spring Boot** and **Spring Security**, implementing **JWT (JSON Web Token)** authentication.  
+
+This project demonstrates a secure RESTful API built with **Spring Boot** and **Spring Security**, implementing **JWT (JSON Web Token)** authentication.
 It is a complete **CRUD (Create, Read, Update, Delete) application** with **role-based authorization**, designed to showcase modern security practices in Java backend development.
 
-## 🔐 Key Security Features
-✅ **Robust Spring Security Implementation**  
-✅ **JWT Authentication with Bearer tokens**  
-✅ **Role-based authorization** (👤 USER, 🛠 MODERATOR, 👑 ADMIN)  
-✅ **Secure password storage with 🔑 BCrypt hashing**  
-✅ **Token validation with expiration (⏳ 10 minutes)**  
-✅ **Custom security filters for JWT processing**  
-✅ **Custom authentication provider integration**  
-✅ **Advanced authorization logic with 🔍 `PermissionEvaluator` for fine-grained access control**
+🔐 Key Security Features
+
+✅ Robust Spring Security Implementation
+✅ JWT Authentication with Bearer tokens
+✅ Role-based authorization (👤 USER, 🛠 MODERATOR, 👑 ADMIN)
+✅ Secure password storage with 🔑 BCrypt hashing
+✅ Token validation with expiration (⏳ 10 minutes)
+✅ Refresh tokens for session renewal without re-login
+✅ Secure logout endpoint for invalidating refresh tokens
+✅ Custom security filters for JWT processing
+✅ Custom authentication provider integration
+✅ Advanced authorization logic with 🔍 PermissionEvaluator for fine-grained access control
 
 
 ## 📌 Technologies Used
 
-- **Java 21** – main programming language
-- **Spring Boot** – backend application framework
-- **Spring Security** – authentication and authorization
-- **JWT (JSON Web Token)** – token-based authentication
-- **JPA (Hibernate)** – object-relational mapping
-- **PostgreSQL** – relational database
-- **Flyway** – database schema versioning and migrations
-- **Maven** – dependency management and build automation
-- **JUnit 5** + **MockMvc** – unit and integration testing
-- **Mockito** – mocking dependencies in tests
-- **Docker** + **Docker Compose** – containerization and database setup
-- **REST API** – client-server communication architecture
-
-
-
+* **Java 21** – main programming language
+* **Spring Boot** – backend application framework
+* **Spring Security** – authentication and authorization
+* **JWT (JSON Web Token)** – token-based authentication
+* **JPA (Hibernate)** – object-relational mapping
+* **PostgreSQL** – relational database
+* **Flyway** – database schema versioning and migrations
+* **Maven** – dependency management and build automation
+* **Docker** + **Docker Compose** – containerization and database setup
+* **REST API** – client-server communication architecture
 
 ## 🏗 Security Components
--  **JwtFilter** – Validates tokens on each request
--  **JWTCustomUsernamePasswordAuthenticationFilter** – Handles login and token generation
--  **JwtAuthenticationProvider** – Validates JWT tokens
--  **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
--  **ProjectConfig** – Central security configuration
--  **CustomPermissionEvaluator** – Enables fine-grained, method-level authorization logic based on permissions
+
+* **JwtFilter** – Validates tokens on each request
+* **JWTCustomUsernamePasswordAuthenticationFilter** – Handles login and token generation
+* **JwtAuthenticationProvider** – Validates JWT tokens
+* **CustomUserDetailsService** – Integrates with Spring Security's authentication flow
+* **ProjectConfig** – Central security configuration
+* **CustomPermissionEvaluator** – Enables fine-grained, method-level authorization logic based on permissions
 
 ---
+
 ## 🔄 Permission Evaluation Logic
 
 The `UserUpdatePermissionEvaluator` implements sophisticated business rules for user updates:
 
-| Current Role | Target User | Action               | Result                                                                 |
-|--------------|-------------|----------------------|------------------------------------------------------------------------|
-| ADMIN        | Any user    | Update               | ✅ Allowed                                                             |
-| MODERATOR    | Regular user| Update               | ✅ Allowed                                                             |
-| MODERATOR    | ADMIN user  | Update               | ❌ Blocked (`AdminUpdateForbiddenException`)                           |
-| MODERATOR    | Any user    | Assign ADMIN role    | ❌ Blocked (`AdminRoleAssignmentException`)                           |
-| USER         | Any user    | Update               | ❌ Blocked (`AccessDeniedException`)                                  |
+| Current Role | Target User  | Action            | Result                                      |
+| ------------ | ------------ | ----------------- | ------------------------------------------- |
+| ADMIN        | Any user     | Update            | ✅ Allowed                                   |
+| MODERATOR    | Regular user | Update            | ✅ Allowed                                   |
+| MODERATOR    | ADMIN user   | Update            | ❌ Blocked (`AdminUpdateForbiddenException`) |
+| MODERATOR    | Any user     | Assign ADMIN role | ❌ Blocked (`AdminRoleAssignmentException`)  |
+| USER         | Any user     | Update            | ❌ Blocked (`AccessDeniedException`)         |
 
-### Key Rules Explanation:
-- **ADMIN** has unrestricted update privileges
-- **MODERATOR** can only update non-admin users
-- **MODERATOR** cannot promote users to ADMIN
-- **USER** role has no update privileges
-- Each violation throws specific exception for precise error handling
-
+---
 
 ## 📝 API Endpoints
-| 🌍 Endpoint       |  Method |  Description                 |  Access                |
-|-------------------|---------|-----------------------------|------------------------|
-| `/register`       | POST    | Register new user           | 🌎 Public               |
-| `/login`          | POST    | Authenticate and get JWT    | 🌎 Public               |
-| `/api/users`      | GET     | Get all users               | 👤 USER, 🛠 MODERATOR, 👑 ADMIN |
-| `/api/users/{id}` | PUT     | Update user                 | 🛠 MODERATOR, 👑 ADMIN   |
-| `/api/users/{id}` | DELETE  | Delete user                 | 👑 ADMIN only           |
+
+| 🌍 Endpoint          | Method | Description                     | Access                    |
+| -------------------- | ------ | ------------------------------- | ------------------------- |
+| `/api/auth/register` | POST   | Register new user               | 🌎 Public                 |
+| `/api/auth/login`    | POST   | Authenticate and get JWT        | 🌎 Public                 |
+| `/api/auth/logout`   | DELETE | Invalidate current JWT          | 👤 USER, MOD, ADMIN       |
+| `/api/auth/refresh`  | POST   | Refresh JWT using refresh token | 👤 USER, MOD, ADMIN       |
+| `/api/users`         | GET    | Get all users                   | 👤 USER, 🛠 MOD, 👑 ADMIN |
+| `/api/users/{id}`    | PUT    | Update user                     | 🛠 MODERATOR, 👑 ADMIN    |
+| `/api/users/{id}`    | DELETE | Delete user                     | 👑 ADMIN only             |
+
+---
 
 ## 🏁 Setup Instructions
 
 ### 🏗 Step 1: Clone the Repository
+
 ```bash
 git clone https://github.com/Trela-dev/SpringSecurityJwtCRUD.git
 cd SpringSecurityJwtCRUD
 ```
 
 ### 🐳 Step 2: Start PostgreSQL Database in Docker
-Navigate to project folder(where the pom.xml file is) and run following commadns
-Run the following command in the project directory to start the database container:
 
 ```bash
 docker-compose up -d
@@ -94,32 +98,15 @@ mvn clean install
 java -jar target/SpringSecurityJwtCRUD-0.0.1-SNAPSHOT.jar
 ```
 
-The application should now be running on [http://localhost:8080](http://localhost:8080).
+App will be running on [http://localhost:8080](http://localhost:8080).
 
-### 📡 Step 4: Test the API with Postman
-Use Postman to test endpoints:
+---
 
+## 📡 Test the API with Postman
 
-#### 📥 User Registration
-**POST** [http://localhost:8080/register](http://localhost:8080/register)
-```json
-{
-  "username": "your_username",
-  "password": "your_password"
-}
-```
+### 📥 User Registration
 
-#### 🔑 User Login
-**POST** [http://localhost:8080/login](http://localhost:8080/login)
-> After logging in, you will receive a **JWT token** in the `Authorization` header of the response.  
-> Copy the token and use it in the `Authorization` header for all endpoints **other than** `/login` and `/register`.
->
-> Format:  
-> `Authorization: Bearer your_token_here`
->
-> In Postman, go to the **Authorization** tab, choose **Bearer Token**, and paste the token into the **Token** field.
-
-
+**POST** `http://localhost:8080/api/auth/register`
 
 ```json
 {
@@ -128,25 +115,66 @@ Use Postman to test endpoints:
 }
 ```
 
-#### 👥 Retrieve All Users
-**GET** [http://localhost:8080/users](http://localhost:8080/users)
+### 🔑 User Login
 
-#### 🗑 Delete a User
-**DELETE** [http://localhost:8080/users/3](http://localhost:8080/users/3)
+**POST** `http://localhost:8080/api/auth/login`
 
-#### ✏ Update a User
-**PUT** [http://localhost:8080/users/3](http://localhost:8080/users/3)
+```json
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
+
+Response includes JWT in the `Authorization` header:
+`Authorization: Bearer your_token_here`
+
+---
+
+### 🚪 User Logout
+
+**DELETE** `http://localhost:8080/api/auth/logout`
+Invalidates the current JWT (server-side refresh token cleanup if implemented).
+
+---
+
+### ♻ Refresh JWT
+
+**POST** `http://localhost:8080/api/auth/refresh`
+
+```json
+{
+  "refreshToken": "your_refresh_token_here"
+}
+```
+
+---
+
+### 👥 Retrieve All Users
+
+**GET** `http://localhost:8080/api/users`
+
+### 🗑 Delete a User
+
+**DELETE** `http://localhost:8080/api/users/3`
+
+### ✏ Update a User
+
+**PUT** `http://localhost:8080/api/users/3`
+
 ```json
 {
   "username": "new_username",
   "password": "new_password"
 }
 ```
----
-# 🔄 Default Users (Admin, Moderator & Users)
 
-| Role        | Username   | Password   |
-|-------------|------------|------------|
+---
+
+## 🔄 Default Users
+
+| Role         | Username    | Password    |
+| ------------ | ----------- | ----------- |
 | 👑 Admin     | `admin`     | `admin`     |
 | 🛠 Moderator | `moderator` | `moderator` |
 | 👤 User      | `user1`     | `user1`     |
@@ -158,35 +186,16 @@ Use Postman to test endpoints:
 Newly registered users are assigned the **👤 USER** role by default.
 
 ---
-## ✅ Testing
 
-The project includes a comprehensive test suite written in **JUnit 5**, using:
+## ⚙ Configuration
 
-- **Spring's WebMvcTest** – for controller-level integration tests
-- **MockMvc** – to simulate HTTP requests and test response handling
-- **Mockito** – to mock service and repository layers
-- **Custom Mock Repositories** – in-memory implementations for `UserRepository` and `RoleRepository`
-
-### Covered Test Cases
-
-- ✅ Successful and failed login scenarios with JWT token verification
-- ✅ Successful and failed user registration
-- ✅ Protected endpoints access with valid/invalid tokens
-- ✅ Role-based access control (e.g., only admins can update/delete other admins)
-- ✅ Conflict scenarios like registering an already existing user
-- ✅ Forbidden actions (e.g., moderators trying to assign admin roles)
+Adjust JWT secret, expiration time, and DB settings in `application.properties`.
 
 ---
 
-## ⚙ Configuration
-Modify settings like JWT secret or database details in `application.properties`.
+## 📦 Postman Collection
 
-## 🚀 Future Improvements
--  Add refresh tokens
--  Implement password reset
+A ready-to-use **Postman collection** with all API endpoints is available in the **`Postman`** folder of this repository.
+You can import it directly into Postman to quickly start testing the authentication flow (register, login, refresh, logout) and user management endpoints.
 
-## 💼 Why This Project Matters
-- 🏗 **Production-ready security**
-- 🏛 **Clean architecture** (Separation of concerns, proper layer isolation)
-- 🔍 **Follows RESTful best practices**
-- 🐳 **Ready for Docker deployment**
+---

@@ -112,16 +112,16 @@ public class JWTCustomUsernamePasswordAuthenticationFilter extends UsernamePassw
 
     }
 
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException, ServletException{
-
-        super.unsuccessfulAuthentication(request,response,failed);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("Invalid credentials");
-
-    }
-
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+//                                              AuthenticationException failed) throws IOException, ServletException{
+//
+//        super.unsuccessfulAuthentication(request,response,failed);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.getWriter().write("Invalid credentials");
+//
+//    }
+//
 
 
 }

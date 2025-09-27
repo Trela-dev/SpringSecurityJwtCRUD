@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 
 @Component
@@ -16,7 +16,8 @@ public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    private final long expirationTime = 10 * 60 * 1000; //10  minutes
+    @Value("${jwt.expiration}")
+    private Duration expirationTime; //10  minutes
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -28,7 +29,7 @@ public class JwtUtil {
                 .subject(username)
                 .claim("roles",roles)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .expiration(new Date(System.currentTimeMillis() + expirationTime.toMillis()))
                 .signWith(getSigningKey())
                 .compact();
     }

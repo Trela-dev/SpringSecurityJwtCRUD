@@ -7,9 +7,11 @@ import com.github.treladev.model.User;
 import com.github.treladev.repository.RefreshTokenRepository;
 import com.github.treladev.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +24,8 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+    @Value("${jwt.refresh-token-expiration}")
+    private Duration refreshTokenDuration;
 
     public RefreshToken createRefreshToken(User user){
 
@@ -29,7 +33,7 @@ public class RefreshTokenService {
         deleteByUserId(user.getId());
 
         String token = UUID.randomUUID().toString();
-        Instant now = Instant.now().plusSeconds(7*24*60*60);
+        Instant now = Instant.now().plus(refreshTokenDuration);
         RefreshToken refreshToken = new RefreshToken(user, token, now);
         return refreshTokenRepository.save(refreshToken);
     }

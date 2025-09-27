@@ -17,3 +17,5 @@ logging:
 
 jwt:
   secret: mySuperSecretKeyThatIsAtLeast32CharactersLong
+  expiration: 10m
+  refresh-token-expiration: 7d
