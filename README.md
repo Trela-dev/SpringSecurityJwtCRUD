@@ -32,6 +32,12 @@ It is a complete **CRUD (Create, Read, Update, Delete) application** with **role
 * **Maven** – dependency management and build automation
 * **Docker** + **Docker Compose** – containerization and database setup
 * **REST API** – client-server communication architecture
+* **JUnit 5** – unit and integration testing
+* **Spring Boot Test** – testing Spring Boot applications with context loading
+* **TestRestTemplate** – HTTP client for integration testing
+* **Testcontainers** – ephemeral containerized databases for reliable integration tests
+* **AssertJ** – fluent assertions for clean and readable test validations
+
 
 ## 🏗 Security Components
 
@@ -195,3 +201,42 @@ A ready-to-use **Postman collection** with all API endpoints is available in the
 You can import it directly into Postman to quickly start testing the authentication flow (register, login, refresh, logout) and user management endpoints.
 
 ---
+
+## 🧪 Integration Tests
+
+This project includes **comprehensive integration tests** using **Spring Boot Test + Testcontainers** to verify all critical functionalities of the application.
+
+### Tested Scenarios
+
+1. **Admin Full Flow**
+    - Admin login (`admin:admin`)
+    - Retrieve all users
+    - Update and delete users/moderators
+    - Verify HTTP status codes and success messages
+
+2. **Moderator Permissions**
+    - Moderator login (`moderator:moderator`)
+    - Attempt to update an admin → **expected 403 Forbidden**
+    - Attempt to assign ADMIN role to a regular user → **expected 403 Forbidden**
+    - Update a regular user → **success**
+
+3. **Regular User Registration and Login**
+    - Register a new user
+    - Login and obtain JWT
+    - Test `/api/auth/refresh` endpoint with refresh token
+
+### 🔧 Testing Technologies
+
+- **Testcontainers** – isolated PostgreSQL container for testing
+- **Spring Boot Test + TestRestTemplate** – integration with HTTP endpoints
+- **JWT Bearer tokens** – authorization testing
+- **Assertions on HTTP status and response body** – verify full CRUD logic and role permissions
+
+These tests ensure that **role-based authorization works as expected**, and all endpoints are properly secured.
+
+### 🚀 Running Tests
+
+Run all integration tests with:
+
+```bash
+mvn clean test
